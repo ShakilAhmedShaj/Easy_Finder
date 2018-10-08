@@ -10,13 +10,14 @@
         <EditText
             android:id="@+id/location_search"
             android:layout_width="340dp"
-            android:layout_height="52dp"
+            android:layout_height="55dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:ems="10"
             android:hint="Enter Place Name" />
 
         <ImageButton
+            android:id="@+id/searchButtonID"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
