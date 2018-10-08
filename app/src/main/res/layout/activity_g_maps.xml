@@ -15,14 +15,14 @@
             android:layout_alignParentTop="true"
             android:ems="10"
             android:hint="Enter Place Name" />
+
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
             android:onClick="onClick"
-            android:src="@mipmap/search"
-            />
+            android:src="@mipmap/search" />
 
 
     </RelativeLayout>
@@ -37,6 +37,50 @@
         android:layout_height="match_parent"
         android:layout_marginTop="45dp"
         tools:context=".gMapsActivity" />
+
+    <RelativeLayout
+        android:id="@+id/all_buttons_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/hospital_nearby"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="60dp"
+            android:onClick="onClick"
+            android:src="@mipmap/hospital" />
+
+        <ImageButton
+            android:id="@+id/police_nearby"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@id/hospital_nearby"
+            android:onClick="onClick"
+            android:src="@mipmap/police" />
+
+        <ImageButton
+            android:id="@+id/restaurant_nearby"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@id/police_nearby"
+            android:onClick="onClick"
+            android:src="@mipmap/restaurant" />
+
+        <ImageButton
+            android:id="@+id/school_nearby"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@id/restaurant_nearby"
+            android:onClick="onClick"
+            android:src="@mipmap/school" />
+
+
+    </RelativeLayout>
 
 </RelativeLayout>
 
