@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -50,14 +51,17 @@ public class gMapsActivity extends FragmentActivity implements
     private double latitide, longitude;
     private int ProximityRadius = 10000;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_g_maps);
 
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkUserLocationPermission();
         }
+
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -65,14 +69,17 @@ public class gMapsActivity extends FragmentActivity implements
         mapFragment.getMapAsync(this);
     }
 
-    //base
 
     public void onClick(View v) {
+        String hospital = "hospital", school = "school", restaurant = "restaurant", police = "police";
+        Object transferData[] = new Object[2];
+        NearByPlaces getNearbyPlaces = new NearByPlaces();
+
 
         switch (v.getId()) {
-            case R.id.searchButtonID:
-                EditText searchTextHolder = findViewById(R.id.location_search);
-                String address = searchTextHolder.getText().toString();
+            case R.id.location_search:
+                EditText addressField = (EditText) findViewById(R.id.location_search);
+                String address = addressField.getText().toString();
 
                 List<Address> addressList = null;
                 MarkerOptions userMarkerOptions = new MarkerOptions();
@@ -96,18 +103,79 @@ public class gMapsActivity extends FragmentActivity implements
                                 mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
                             }
                         } else {
-                            Toast.makeText(this, "Location Not Found", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Location not found...", Toast.LENGTH_SHORT).show();
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 } else {
-                    Toast.makeText(this, "Please write Location Name", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "please write any location name...", Toast.LENGTH_SHORT).show();
                 }
                 break;
 
 
+            case R.id.hospital_nearby:
+                mMap.clear();
+                String url = getUrl(latitide, longitude, hospital);
+                transferData[0] = mMap;
+                transferData[1] = url;
+
+                getNearbyPlaces.execute(transferData);
+                Toast.makeText(this, "Searching for Nearby Hospitals...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Showing Nearby Hospitals...", Toast.LENGTH_SHORT).show();
+                break;
+
+
+            case R.id.police_nearby:
+                mMap.clear();
+                url = getUrl(latitide, longitude, police);
+                transferData[0] = mMap;
+                transferData[1] = url;
+
+                getNearbyPlaces.execute(transferData);
+                Toast.makeText(this, "Searching for Nearby Police Station...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Showing Nearby Police Station...", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.restaurant_nearby:
+                mMap.clear();
+                url = getUrl(latitide, longitude, restaurant);
+                transferData[0] = mMap;
+                transferData[1] = url;
+
+                getNearbyPlaces.execute(transferData);
+                Toast.makeText(this, "Searching for Nearby Restaurants...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Showing Nearby Restaurants...", Toast.LENGTH_SHORT).show();
+                break;
+
+
+            case R.id.school_nearby:
+                mMap.clear();
+                url = getUrl(latitide, longitude, school);
+                transferData[0] = mMap;
+                transferData[1] = url;
+
+                getNearbyPlaces.execute(transferData);
+                Toast.makeText(this, "Searching for Nearby Schools...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Showing Nearby Schools...", Toast.LENGTH_SHORT).show();
+                break;
+
+
         }
+    }
+
+
+    private String getUrl(double latitide, double longitude, String nearbyPlace) {
+        StringBuilder googleURL = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googleURL.append("location=" + latitide + "," + longitude);
+        googleURL.append("&radius=" + ProximityRadius);
+        googleURL.append("&type=" + nearbyPlace);
+        googleURL.append("&sensor=true");
+        googleURL.append("&key=" + "AIzaSyDtIWXQDUA1ufc_Vff3qbz522DnZ26Nk9w");
+
+        Log.d("GoogleMapsActivity", "url = " + googleURL.toString());
+
+        return googleURL.toString();
     }
 
 
@@ -123,6 +191,7 @@ public class gMapsActivity extends FragmentActivity implements
 
     }
 
+
     public boolean checkUserLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -135,6 +204,7 @@ public class gMapsActivity extends FragmentActivity implements
             return true;
         }
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -154,6 +224,7 @@ public class gMapsActivity extends FragmentActivity implements
         }
     }
 
+
     protected synchronized void buildGoogleApiClient() {
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -167,7 +238,6 @@ public class gMapsActivity extends FragmentActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-
         latitide = location.getLatitude();
         longitude = location.getLongitude();
 
@@ -181,7 +251,7 @@ public class gMapsActivity extends FragmentActivity implements
 
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-        markerOptions.title("Your Current Location");
+        markerOptions.title("user Current Location");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
 
         currentUserLocationMarker = mMap.addMarker(markerOptions);
@@ -192,12 +262,11 @@ public class gMapsActivity extends FragmentActivity implements
         if (googleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
         }
-
     }
+
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
         locationRequest = new LocationRequest();
         locationRequest.setInterval(1100);
         locationRequest.setFastestInterval(1100);
@@ -206,6 +275,7 @@ public class gMapsActivity extends FragmentActivity implements
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
         }
+
 
     }
 
