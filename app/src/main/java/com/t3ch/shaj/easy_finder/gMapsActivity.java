@@ -77,7 +77,7 @@ public class gMapsActivity extends FragmentActivity implements
 
 
         switch (v.getId()) {
-            case R.id.location_search:
+            case R.id.searchButtonID:
                 EditText addressField = (EditText) findViewById(R.id.location_search);
                 String address = addressField.getText().toString();
 
@@ -171,7 +171,7 @@ public class gMapsActivity extends FragmentActivity implements
         googleURL.append("&radius=" + ProximityRadius);
         googleURL.append("&type=" + nearbyPlace);
         googleURL.append("&sensor=true");
-        googleURL.append("&key=" + "AIzaSyDtIWXQDUA1ufc_Vff3qbz522DnZ26Nk9w");
+        googleURL.append("&key=" + "AIzaSyDgBvVugReJETu_Lf0ModOVm-4lAjtqY4E");
 
         Log.d("GoogleMapsActivity", "url = " + googleURL.toString());
 
